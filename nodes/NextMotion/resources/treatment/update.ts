@@ -1,0 +1,63 @@
+import type { INodeProperties } from 'n8n-workflow';
+
+const showOnlyForTreatmentUpdate = {
+	operation: ['update'],
+	resource: ['treatment'],
+};
+
+export const treatmentUpdateDescription: INodeProperties[] = [
+	{
+		displayName: 'Update Fields',
+		name: 'updateFields',
+		type: 'collection',
+		placeholder: 'Add Field',
+		default: {},
+		displayOptions: {
+			show: showOnlyForTreatmentUpdate,
+		},
+		options: [
+			{
+				displayName: 'Treatment Type ID',
+				name: 'treatment_type_id',
+				type: 'string',
+				default: '',
+				description: 'The ID of the treatment type',
+				routing: {
+					send: {
+						type: 'body',
+						property: 'treatment_type_id',
+					},
+				},
+			},
+			{
+				displayName: 'Quantity',
+				name: 'quantity',
+				type: 'number',
+				default: 1,
+				description: 'Number of units of this treatment',
+				routing: {
+					send: {
+						type: 'body',
+						property: 'quantity',
+					},
+				},
+			},
+			{
+				displayName: 'Notes',
+				name: 'notes',
+				type: 'string',
+				typeOptions: {
+					rows: 4,
+				},
+				default: '',
+				description: 'Additional notes about the treatment',
+				routing: {
+					send: {
+						type: 'body',
+						property: 'notes',
+					},
+				},
+			},
+		],
+	},
+];
