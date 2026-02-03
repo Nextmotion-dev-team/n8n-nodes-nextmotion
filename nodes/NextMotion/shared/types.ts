@@ -1058,3 +1058,44 @@ export interface SurveyForm {
 }
 
 export type SurveyFormsResponse = PaginatedResponse<SurveyForm>;
+
+// ============================================================================
+// WEBHOOK
+// ============================================================================
+
+export type WebhookEventType =
+	| 'appointment_request_create'
+	| 'calendar_appointment_absence_intersect'
+	| 'calendar_appointment_create'
+	| 'calendar_appointment_delete'
+	| 'calendar_appointment_end'
+	| 'calendar_appointment_next_visit_remind'
+	| 'calendar_appointment_start'
+	| 'calendar_appointment_update'
+	| 'invoice_create'
+	| 'invoice_paid'
+	| 'invoice_validate'
+	| 'lead_create'
+	| 'patient_create'
+	| 'patient_delete'
+	| 'patient_update'
+	| 'payment_create'
+	| 'quote_accept'
+	| 'quote_create'
+	| 'quote_validate'
+	| 'review_request_send'
+	| 'treatment_remind'
+	| 'visit_audio_attach'
+	| 'visit_create';
+
+export interface Webhook {
+	id: string;
+	created_time: string;
+	modified_time: string;
+	clinic_id: string | null;
+	action_type: WebhookEventType;
+	url: string;
+	headers: Record<string, unknown>;
+}
+
+export type WebhooksResponse = PaginatedResponse<Webhook>;

@@ -1,0 +1,18 @@
+{
+	"node": "n8n-nodes-nextmotion.nextMotionTrigger",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": ["Development", "Data & Storage"],
+	"resources": {
+		"credentialDocumentation": [
+			{
+				"url": "https://api.nextmotion.net/open_api/docs/redoc"
+			}
+		],
+		"primaryDocumentation": [
+			{
+				"url": "https://api.nextmotion.net/open_api/docs/redoc"
+			}
+		]
+	}
+}

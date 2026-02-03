@@ -27,6 +27,7 @@ import { treatmentPricingDescription } from './resources/treatmentPricing';
 import { treatmentTypeDescription } from './resources/treatmentType';
 import { visitDescription } from './resources/visit';
 import { visitTypeDescription } from './resources/visitType';
+import { webhookDescription } from './resources/webhook';
 import { getClinics } from './listSearch/getClinics';
 import { getPatients } from './listSearch/getPatients';
 import { getDoctors } from './listSearch/getDoctors';
@@ -177,11 +178,15 @@ export class NextMotion implements INodeType {
 						name: 'Visit',
 						value: 'visit',
 					},
-					{
-						name: 'Visit Type',
-						value: 'visitType',
-					},
-				],
+				{
+					name: 'Visit Type',
+					value: 'visitType',
+				},
+				{
+					name: 'Webhook',
+					value: 'webhook',
+				},
+			],
 				default: 'patient',
 			},
 			...appointmentDeviceDescription,
@@ -212,6 +217,7 @@ export class NextMotion implements INodeType {
 			...treatmentTypeDescription,
 			...visitDescription,
 			...visitTypeDescription,
+			...webhookDescription,
 		],
 	};
 

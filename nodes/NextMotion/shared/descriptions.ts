@@ -1,7 +1,7 @@
 import type { INodeProperties, INodePropertyOptions } from 'n8n-workflow';
 import { PAGINATION_MAX_LIMIT, PAGINATION_MIN_LIMIT, STANDARD_OUTPUT_POST_RECEIVE } from './constants';
 
-const UUID_VALIDATION = [
+export const UUID_VALIDATION = [
 	{
 		type: 'regex' as const,
 		properties: {
@@ -128,8 +128,9 @@ export function createIdField(
 				resource: [resource],
 			},
 		},
+		placeholder: 'e.g. 550e8400-e29b-41d4-a716-446655440000',
 		description: `The ID of the ${displayName.toLowerCase()}`,
-	};
+	} as INodeProperties;
 }
 
 export function createGetManyOperation(

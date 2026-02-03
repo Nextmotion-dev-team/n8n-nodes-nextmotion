@@ -10915,6 +10915,591 @@
               ]
           }
       },
+      "/open_api/v4/clinics/{clinic_id}/webhooks": {
+          "get": {
+              "operationId": "oapi_clinic_webhook_list",
+              "description": "Mixin to handle webhook creation with is_third_party support",
+              "summary": "List clinic's webhooks",
+              "parameters": [
+                  {
+                      "in": "path",
+                      "name": "clinic_id",
+                      "schema": {
+                          "type": "string",
+                          "format": "uuid"
+                      },
+                      "description": "Available clinic IDs can be retrieved via e.g. `clinic_list`",
+                      "required": true
+                  },
+                  {
+                      "in": "query",
+                      "name": "limit",
+                      "schema": {
+                          "type": "integer",
+                          "maximum": 100,
+                          "minimum": 1,
+                          "default": 50
+                      },
+                      "description": "Maximum number of items to return in the response"
+                  },
+                  {
+                      "in": "query",
+                      "name": "offset",
+                      "schema": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "default": 0
+                      },
+                      "description": "Initial index from which to return results, use this to paginate through results"
+                  }
+              ],
+              "tags": [
+                  "Webhook"
+              ],
+              "responses": {
+                  "200": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/WebhookListResponse"
+                              }
+                          }
+                      },
+                      "description": ""
+                  },
+                  "406": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/NotAcceptableErrorResponse"
+                              },
+                              "examples": {
+                                  "NotAcceptableExample": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "not_acceptable",
+                                                  "message": "Could not satisfy the request Accept header.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      }
+                                  }
+                              }
+                          }
+                      },
+                      "description": "MIME type provided in request's Accept header is different than application/json."
+                  },
+                  "405": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/MethodNotAllowedErrorResponse"
+                              },
+                              "examples": {
+                                  "MethodNotAllowedExample": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "method_not_allowed",
+                                                  "message": "Method \"{method}\" not allowed.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      }
+                                  }
+                              }
+                          }
+                      },
+                      "description": "Endpoint isn't meant to be used with this HTTP method."
+                  },
+                  "415": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/UnsupportedMediaTypeErrorResponse"
+                              },
+                              "examples": {
+                                  "UnsupportedMediaTypeExample": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "unsupported_media_type",
+                                                  "message": "Unsupported media type \"{media_type}\" in request.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      }
+                                  }
+                              }
+                          }
+                      },
+                      "description": "MIME type provided in request's Content-Type header isn't supported."
+                  },
+                  "502": {
+                      "description": "API is down, most probably due to deployment."
+                  },
+                  "500": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ErrorErrorResponse"
+                              },
+                              "examples": {
+                                  "APIExceptionExample": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "error",
+                                                  "message": "A server error occurred.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      }
+                                  }
+                              }
+                          }
+                      },
+                      "description": "Some unexpected error occurred during request, you should contact NextMotion."
+                  },
+                  "401": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/NotAuthenticatedErrorResponse"
+                              },
+                              "examples": {
+                                  "NoAuthorizationHeader": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "not_authenticated",
+                                                  "message": "Authentication credentials were not provided.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "There isn't Authorization header in the request, there's no 'Bearer' prefix or provided token == 'null' (as a string)"
+                                  },
+                                  "NoCredentialsProvided": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "not_authenticated",
+                                                  "message": "Invalid token header. No credentials provided.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "There is Authorization header and 'Bearer' prefix but the token wasn't provided"
+                                  },
+                                  "TokenContainsSpaces": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "not_authenticated",
+                                                  "message": "Invalid token header. Token string should not contain spaces.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "Token contains spaces"
+                                  },
+                                  "TokenContainsInvalidCharacters": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "not_authenticated",
+                                                  "message": "Invalid token header. Token string should not contain invalid characters.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "Token contains non-unicode characters"
+                                  },
+                                  "InvalidTokenError": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "invalid_token",
+                                                  "message": "Invalid token.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "Session associated with the token doesn't exist"
+                                  },
+                                  "UserInactiveError": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "user_inactive",
+                                                  "message": "User inactive.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "User associated with the session is disabled"
+                                  }
+                              }
+                          }
+                      },
+                      "description": "There's something wrong with request's Authorization header.\nValid format - Authorization: Bearer {token}"
+                  },
+                  "403": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/NonEmployeeAccessDeniedErrorResponse"
+                              },
+                              "examples": {
+                                  "NonEmployeeAccessDenied": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "non_employee_access_denied",
+                                                  "message": "You do not have permission to perform this action.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "User isn't of type employee"
+                                  },
+                                  "ResourceAccessDenied": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "{resource}_access_denied",
+                                                  "message": "You do not have permission to perform this action.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "User isn't authorized to access the resource or the resource doesn't exist"
+                                  }
+                              }
+                          }
+                      },
+                      "description": "User isn't authorized to access this endpoint or resource, it might also mean the resource doesn't exist"
+                  }
+              },
+              "security": [
+                  {
+                      "BearerAuth": []
+                  }
+              ]
+          },
+          "post": {
+              "operationId": "oapi_clinic_webhook_create",
+              "description": "Mixin to handle webhook creation with is_third_party support",
+              "summary": "Create a webhook",
+              "parameters": [
+                  {
+                      "in": "path",
+                      "name": "clinic_id",
+                      "schema": {
+                          "type": "string",
+                          "format": "uuid"
+                      },
+                      "description": "Available clinic IDs can be retrieved via e.g. `clinic_list`",
+                      "required": true
+                  }
+              ],
+              "tags": [
+                  "Webhook"
+              ],
+              "requestBody": {
+                  "content": {
+                      "application/json": {
+                          "schema": {
+                              "$ref": "#/components/schemas/ClinicWebhookCreate"
+                          }
+                      }
+                  },
+                  "required": true
+              },
+              "responses": {
+                  "201": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/WebhookRetrieveResponse"
+                              }
+                          }
+                      },
+                      "description": ""
+                  },
+                  "406": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/NotAcceptableErrorResponse"
+                              },
+                              "examples": {
+                                  "NotAcceptableExample": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "not_acceptable",
+                                                  "message": "Could not satisfy the request Accept header.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      }
+                                  }
+                              }
+                          }
+                      },
+                      "description": "MIME type provided in request's Accept header is different than application/json."
+                  },
+                  "405": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/MethodNotAllowedErrorResponse"
+                              },
+                              "examples": {
+                                  "MethodNotAllowedExample": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "method_not_allowed",
+                                                  "message": "Method \"{method}\" not allowed.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      }
+                                  }
+                              }
+                          }
+                      },
+                      "description": "Endpoint isn't meant to be used with this HTTP method."
+                  },
+                  "415": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/UnsupportedMediaTypeErrorResponse"
+                              },
+                              "examples": {
+                                  "UnsupportedMediaTypeExample": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "unsupported_media_type",
+                                                  "message": "Unsupported media type \"{media_type}\" in request.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      }
+                                  }
+                              }
+                          }
+                      },
+                      "description": "MIME type provided in request's Content-Type header isn't supported."
+                  },
+                  "502": {
+                      "description": "API is down, most probably due to deployment."
+                  },
+                  "500": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ErrorErrorResponse"
+                              },
+                              "examples": {
+                                  "APIExceptionExample": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "error",
+                                                  "message": "A server error occurred.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      }
+                                  }
+                              }
+                          }
+                      },
+                      "description": "Some unexpected error occurred during request, you should contact NextMotion."
+                  },
+                  "400": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ParseErrorErrorResponse"
+                              },
+                              "examples": {
+                                  "ParseErrorExample": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "parse_error",
+                                                  "message": "Malformed request.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      }
+                                  }
+                              }
+                          }
+                      },
+                      "description": "There are problems with request, exclusive to endpoint's query params and request body validators. Aside from these there could be validation checks with custom error codes, they will be listed below with other examples, if any\n\nRequest body couldn't be parsed"
+                  },
+                  "401": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/NotAuthenticatedErrorResponse"
+                              },
+                              "examples": {
+                                  "NoAuthorizationHeader": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "not_authenticated",
+                                                  "message": "Authentication credentials were not provided.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "There isn't Authorization header in the request, there's no 'Bearer' prefix or provided token == 'null' (as a string)"
+                                  },
+                                  "NoCredentialsProvided": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "not_authenticated",
+                                                  "message": "Invalid token header. No credentials provided.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "There is Authorization header and 'Bearer' prefix but the token wasn't provided"
+                                  },
+                                  "TokenContainsSpaces": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "not_authenticated",
+                                                  "message": "Invalid token header. Token string should not contain spaces.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "Token contains spaces"
+                                  },
+                                  "TokenContainsInvalidCharacters": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "not_authenticated",
+                                                  "message": "Invalid token header. Token string should not contain invalid characters.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "Token contains non-unicode characters"
+                                  },
+                                  "InvalidTokenError": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "invalid_token",
+                                                  "message": "Invalid token.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "Session associated with the token doesn't exist"
+                                  },
+                                  "UserInactiveError": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "user_inactive",
+                                                  "message": "User inactive.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "User associated with the session is disabled"
+                                  }
+                              }
+                          }
+                      },
+                      "description": "There's something wrong with request's Authorization header.\nValid format - Authorization: Bearer {token}"
+                  },
+                  "403": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/NonEmployeeAccessDeniedErrorResponse"
+                              },
+                              "examples": {
+                                  "NonEmployeeAccessDenied": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "non_employee_access_denied",
+                                                  "message": "You do not have permission to perform this action.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "User isn't of type employee"
+                                  },
+                                  "ResourceAccessDenied": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "{resource}_access_denied",
+                                                  "message": "You do not have permission to perform this action.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "User isn't authorized to access the resource or the resource doesn't exist"
+                                  }
+                              }
+                          }
+                      },
+                      "description": "User isn't authorized to access this endpoint or resource, it might also mean the resource doesn't exist"
+                  }
+              },
+              "security": [
+                  {
+                      "BearerAuth": []
+                  }
+              ]
+          }
+      },
       "/open_api/v4/consultations/{consultation_id}/invoices": {
           "post": {
               "operationId": "oapi_consultation_invoice_create",
@@ -23416,10 +24001,884 @@
                   }
               ]
           }
+      },
+      "/open_api/v4/webhooks/{webhook_id}": {
+          "get": {
+              "operationId": "oapi_webhook_retrieve",
+              "description": "Mixin to handle webhook updates",
+              "summary": "Retrieve a webhook",
+              "parameters": [
+                  {
+                      "in": "path",
+                      "name": "webhook_id",
+                      "schema": {
+                          "type": "string",
+                          "format": "uuid"
+                      },
+                      "description": "Available webhook IDs can be retrieved via e.g. `clinic_webhook_list`",
+                      "required": true
+                  }
+              ],
+              "tags": [
+                  "Webhook"
+              ],
+              "responses": {
+                  "200": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/WebhookRetrieveResponse"
+                              }
+                          }
+                      },
+                      "description": ""
+                  },
+                  "406": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/NotAcceptableErrorResponse"
+                              },
+                              "examples": {
+                                  "NotAcceptableExample": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "not_acceptable",
+                                                  "message": "Could not satisfy the request Accept header.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      }
+                                  }
+                              }
+                          }
+                      },
+                      "description": "MIME type provided in request's Accept header is different than application/json."
+                  },
+                  "405": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/MethodNotAllowedErrorResponse"
+                              },
+                              "examples": {
+                                  "MethodNotAllowedExample": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "method_not_allowed",
+                                                  "message": "Method \"{method}\" not allowed.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      }
+                                  }
+                              }
+                          }
+                      },
+                      "description": "Endpoint isn't meant to be used with this HTTP method."
+                  },
+                  "415": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/UnsupportedMediaTypeErrorResponse"
+                              },
+                              "examples": {
+                                  "UnsupportedMediaTypeExample": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "unsupported_media_type",
+                                                  "message": "Unsupported media type \"{media_type}\" in request.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      }
+                                  }
+                              }
+                          }
+                      },
+                      "description": "MIME type provided in request's Content-Type header isn't supported."
+                  },
+                  "502": {
+                      "description": "API is down, most probably due to deployment."
+                  },
+                  "500": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ErrorErrorResponse"
+                              },
+                              "examples": {
+                                  "APIExceptionExample": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "error",
+                                                  "message": "A server error occurred.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      }
+                                  }
+                              }
+                          }
+                      },
+                      "description": "Some unexpected error occurred during request, you should contact NextMotion."
+                  },
+                  "401": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/NotAuthenticatedErrorResponse"
+                              },
+                              "examples": {
+                                  "NoAuthorizationHeader": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "not_authenticated",
+                                                  "message": "Authentication credentials were not provided.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "There isn't Authorization header in the request, there's no 'Bearer' prefix or provided token == 'null' (as a string)"
+                                  },
+                                  "NoCredentialsProvided": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "not_authenticated",
+                                                  "message": "Invalid token header. No credentials provided.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "There is Authorization header and 'Bearer' prefix but the token wasn't provided"
+                                  },
+                                  "TokenContainsSpaces": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "not_authenticated",
+                                                  "message": "Invalid token header. Token string should not contain spaces.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "Token contains spaces"
+                                  },
+                                  "TokenContainsInvalidCharacters": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "not_authenticated",
+                                                  "message": "Invalid token header. Token string should not contain invalid characters.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "Token contains non-unicode characters"
+                                  },
+                                  "InvalidTokenError": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "invalid_token",
+                                                  "message": "Invalid token.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "Session associated with the token doesn't exist"
+                                  },
+                                  "UserInactiveError": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "user_inactive",
+                                                  "message": "User inactive.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "User associated with the session is disabled"
+                                  }
+                              }
+                          }
+                      },
+                      "description": "There's something wrong with request's Authorization header.\nValid format - Authorization: Bearer {token}"
+                  },
+                  "403": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/NonEmployeeAccessDeniedErrorResponse"
+                              },
+                              "examples": {
+                                  "NonEmployeeAccessDenied": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "non_employee_access_denied",
+                                                  "message": "You do not have permission to perform this action.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "User isn't of type employee"
+                                  },
+                                  "ResourceAccessDenied": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "{resource}_access_denied",
+                                                  "message": "You do not have permission to perform this action.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "User isn't authorized to access the resource or the resource doesn't exist"
+                                  }
+                              }
+                          }
+                      },
+                      "description": "User isn't authorized to access this endpoint or resource, it might also mean the resource doesn't exist"
+                  }
+              },
+              "security": [
+                  {
+                      "BearerAuth": []
+                  }
+              ]
+          },
+          "put": {
+              "operationId": "oapi_webhook_update",
+              "description": "Mixin to handle webhook updates",
+              "summary": "Update a webhook",
+              "parameters": [
+                  {
+                      "in": "path",
+                      "name": "webhook_id",
+                      "schema": {
+                          "type": "string",
+                          "format": "uuid"
+                      },
+                      "description": "Available webhook IDs can be retrieved via e.g. `clinic_webhook_list`",
+                      "required": true
+                  }
+              ],
+              "tags": [
+                  "Webhook"
+              ],
+              "requestBody": {
+                  "content": {
+                      "application/json": {
+                          "schema": {
+                              "$ref": "#/components/schemas/WebhookUpdate"
+                          }
+                      }
+                  },
+                  "required": true
+              },
+              "responses": {
+                  "200": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/WebhookRetrieveResponse"
+                              }
+                          }
+                      },
+                      "description": ""
+                  },
+                  "406": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/NotAcceptableErrorResponse"
+                              },
+                              "examples": {
+                                  "NotAcceptableExample": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "not_acceptable",
+                                                  "message": "Could not satisfy the request Accept header.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      }
+                                  }
+                              }
+                          }
+                      },
+                      "description": "MIME type provided in request's Accept header is different than application/json."
+                  },
+                  "405": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/MethodNotAllowedErrorResponse"
+                              },
+                              "examples": {
+                                  "MethodNotAllowedExample": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "method_not_allowed",
+                                                  "message": "Method \"{method}\" not allowed.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      }
+                                  }
+                              }
+                          }
+                      },
+                      "description": "Endpoint isn't meant to be used with this HTTP method."
+                  },
+                  "415": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/UnsupportedMediaTypeErrorResponse"
+                              },
+                              "examples": {
+                                  "UnsupportedMediaTypeExample": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "unsupported_media_type",
+                                                  "message": "Unsupported media type \"{media_type}\" in request.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      }
+                                  }
+                              }
+                          }
+                      },
+                      "description": "MIME type provided in request's Content-Type header isn't supported."
+                  },
+                  "502": {
+                      "description": "API is down, most probably due to deployment."
+                  },
+                  "500": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ErrorErrorResponse"
+                              },
+                              "examples": {
+                                  "APIExceptionExample": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "error",
+                                                  "message": "A server error occurred.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      }
+                                  }
+                              }
+                          }
+                      },
+                      "description": "Some unexpected error occurred during request, you should contact NextMotion."
+                  },
+                  "400": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ParseErrorErrorResponse"
+                              },
+                              "examples": {
+                                  "ParseErrorExample": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "parse_error",
+                                                  "message": "Malformed request.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      }
+                                  }
+                              }
+                          }
+                      },
+                      "description": "There are problems with request, exclusive to endpoint's query params and request body validators. Aside from these there could be validation checks with custom error codes, they will be listed below with other examples, if any\n\nRequest body couldn't be parsed"
+                  },
+                  "401": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/NotAuthenticatedErrorResponse"
+                              },
+                              "examples": {
+                                  "NoAuthorizationHeader": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "not_authenticated",
+                                                  "message": "Authentication credentials were not provided.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "There isn't Authorization header in the request, there's no 'Bearer' prefix or provided token == 'null' (as a string)"
+                                  },
+                                  "NoCredentialsProvided": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "not_authenticated",
+                                                  "message": "Invalid token header. No credentials provided.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "There is Authorization header and 'Bearer' prefix but the token wasn't provided"
+                                  },
+                                  "TokenContainsSpaces": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "not_authenticated",
+                                                  "message": "Invalid token header. Token string should not contain spaces.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "Token contains spaces"
+                                  },
+                                  "TokenContainsInvalidCharacters": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "not_authenticated",
+                                                  "message": "Invalid token header. Token string should not contain invalid characters.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "Token contains non-unicode characters"
+                                  },
+                                  "InvalidTokenError": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "invalid_token",
+                                                  "message": "Invalid token.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "Session associated with the token doesn't exist"
+                                  },
+                                  "UserInactiveError": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "user_inactive",
+                                                  "message": "User inactive.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "User associated with the session is disabled"
+                                  }
+                              }
+                          }
+                      },
+                      "description": "There's something wrong with request's Authorization header.\nValid format - Authorization: Bearer {token}"
+                  },
+                  "403": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/NonEmployeeAccessDeniedErrorResponse"
+                              },
+                              "examples": {
+                                  "NonEmployeeAccessDenied": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "non_employee_access_denied",
+                                                  "message": "You do not have permission to perform this action.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "User isn't of type employee"
+                                  },
+                                  "ResourceAccessDenied": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "{resource}_access_denied",
+                                                  "message": "You do not have permission to perform this action.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "User isn't authorized to access the resource or the resource doesn't exist"
+                                  }
+                              }
+                          }
+                      },
+                      "description": "User isn't authorized to access this endpoint or resource, it might also mean the resource doesn't exist"
+                  }
+              },
+              "security": [
+                  {
+                      "BearerAuth": []
+                  }
+              ]
+          },
+          "delete": {
+              "operationId": "oapi_webhook_destroy",
+              "description": "Mixin to handle webhook updates",
+              "summary": "Delete a webhook",
+              "parameters": [
+                  {
+                      "in": "path",
+                      "name": "webhook_id",
+                      "schema": {
+                          "type": "string",
+                          "format": "uuid"
+                      },
+                      "description": "Available webhook IDs can be retrieved via e.g. `clinic_webhook_list`",
+                      "required": true
+                  }
+              ],
+              "tags": [
+                  "Webhook"
+              ],
+              "responses": {
+                  "204": {
+                      "description": "Empty response."
+                  },
+                  "406": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/NotAcceptableErrorResponse"
+                              },
+                              "examples": {
+                                  "NotAcceptableExample": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "not_acceptable",
+                                                  "message": "Could not satisfy the request Accept header.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      }
+                                  }
+                              }
+                          }
+                      },
+                      "description": "MIME type provided in request's Accept header is different than application/json."
+                  },
+                  "405": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/MethodNotAllowedErrorResponse"
+                              },
+                              "examples": {
+                                  "MethodNotAllowedExample": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "method_not_allowed",
+                                                  "message": "Method \"{method}\" not allowed.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      }
+                                  }
+                              }
+                          }
+                      },
+                      "description": "Endpoint isn't meant to be used with this HTTP method."
+                  },
+                  "415": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/UnsupportedMediaTypeErrorResponse"
+                              },
+                              "examples": {
+                                  "UnsupportedMediaTypeExample": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "unsupported_media_type",
+                                                  "message": "Unsupported media type \"{media_type}\" in request.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      }
+                                  }
+                              }
+                          }
+                      },
+                      "description": "MIME type provided in request's Content-Type header isn't supported."
+                  },
+                  "502": {
+                      "description": "API is down, most probably due to deployment."
+                  },
+                  "500": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ErrorErrorResponse"
+                              },
+                              "examples": {
+                                  "APIExceptionExample": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "error",
+                                                  "message": "A server error occurred.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      }
+                                  }
+                              }
+                          }
+                      },
+                      "description": "Some unexpected error occurred during request, you should contact NextMotion."
+                  },
+                  "400": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ParseErrorErrorResponse"
+                              },
+                              "examples": {
+                                  "ParseErrorExample": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "parse_error",
+                                                  "message": "Malformed request.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      }
+                                  }
+                              }
+                          }
+                      },
+                      "description": "There are problems with request, exclusive to endpoint's query params and request body validators. Aside from these there could be validation checks with custom error codes, they will be listed below with other examples, if any\n\nRequest body couldn't be parsed"
+                  },
+                  "401": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/NotAuthenticatedErrorResponse"
+                              },
+                              "examples": {
+                                  "NoAuthorizationHeader": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "not_authenticated",
+                                                  "message": "Authentication credentials were not provided.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "There isn't Authorization header in the request, there's no 'Bearer' prefix or provided token == 'null' (as a string)"
+                                  },
+                                  "NoCredentialsProvided": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "not_authenticated",
+                                                  "message": "Invalid token header. No credentials provided.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "There is Authorization header and 'Bearer' prefix but the token wasn't provided"
+                                  },
+                                  "TokenContainsSpaces": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "not_authenticated",
+                                                  "message": "Invalid token header. Token string should not contain spaces.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "Token contains spaces"
+                                  },
+                                  "TokenContainsInvalidCharacters": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "not_authenticated",
+                                                  "message": "Invalid token header. Token string should not contain invalid characters.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "Token contains non-unicode characters"
+                                  },
+                                  "InvalidTokenError": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "invalid_token",
+                                                  "message": "Invalid token.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "Session associated with the token doesn't exist"
+                                  },
+                                  "UserInactiveError": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "user_inactive",
+                                                  "message": "User inactive.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "User associated with the session is disabled"
+                                  }
+                              }
+                          }
+                      },
+                      "description": "There's something wrong with request's Authorization header.\nValid format - Authorization: Bearer {token}"
+                  },
+                  "403": {
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/NonEmployeeAccessDeniedErrorResponse"
+                              },
+                              "examples": {
+                                  "NonEmployeeAccessDenied": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "non_employee_access_denied",
+                                                  "message": "You do not have permission to perform this action.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "User isn't of type employee"
+                                  },
+                                  "ResourceAccessDenied": {
+                                      "value": {
+                                          "errors": [
+                                              {
+                                                  "code": "{resource}_access_denied",
+                                                  "message": "You do not have permission to perform this action.",
+                                                  "field": null,
+                                                  "field_message": null
+                                              }
+                                          ]
+                                      },
+                                      "summary": "User isn't authorized to access the resource or the resource doesn't exist"
+                                  }
+                              }
+                          }
+                      },
+                      "description": "User isn't authorized to access this endpoint or resource, it might also mean the resource doesn't exist"
+                  }
+              },
+              "security": [
+                  {
+                      "BearerAuth": []
+                  }
+              ]
+          }
       }
   },
   "components": {
       "schemas": {
+          "ActionTypeEnum": {
+              "enum": [
+                  "patient_create",
+                  "patient_update",
+                  "patient_delete",
+                  "quote_create",
+                  "quote_validate",
+                  "quote_accept",
+                  "invoice_create",
+                  "invoice_validate",
+                  "invoice_paid",
+                  "payment_create",
+                  "appointment_request_create",
+                  "calendar_appointment_create",
+                  "calendar_appointment_next_visit_remind",
+                  "calendar_appointment_update",
+                  "calendar_appointment_delete",
+                  "calendar_appointment_start",
+                  "calendar_appointment_end",
+                  "review_request_send",
+                  "visit_create",
+                  "visit_audio_attach",
+                  "calendar_appointment_absence_intersect",
+                  "treatment_remind",
+                  "lead_create"
+              ],
+              "type": "string",
+              "description": "* `patient_create` - PATIENT_CREATE\n* `patient_update` - PATIENT_UPDATE\n* `patient_delete` - PATIENT_DELETE\n* `quote_create` - QUOTE_CREATE\n* `quote_validate` - QUOTE_VALIDATE\n* `quote_accept` - QUOTE_ACCEPT\n* `invoice_create` - INVOICE_CREATE\n* `invoice_validate` - INVOICE_VALIDATE\n* `invoice_paid` - INVOICE_PAID\n* `payment_create` - PAYMENT_CREATE\n* `appointment_request_create` - APPOINTMENT_REQUEST_CREATE\n* `calendar_appointment_create` - CALENDAR_APPOINTMENT_CREATE\n* `calendar_appointment_next_visit_remind` - CALENDAR_APPOINTMENT_NEXT_VISIT_REMIND\n* `calendar_appointment_update` - CALENDAR_APPOINTMENT_UPDATE\n* `calendar_appointment_delete` - CALENDAR_APPOINTMENT_DELETE\n* `calendar_appointment_start` - CALENDAR_APPOINTMENT_START\n* `calendar_appointment_end` - CALENDAR_APPOINTMENT_END\n* `review_request_send` - REVIEW_REQUEST_SEND\n* `visit_create` - VISIT_CREATE\n* `visit_audio_attach` - VISIT_AUDIO_ATTACH\n* `calendar_appointment_absence_intersect` - CALENDAR_APPOINTMENT_ABSENCE_INTERSECT\n* `treatment_remind` - TREATMENT_REMIND\n* `lead_create` - LEAD_CREATE"
+          },
           "AppointmentDevice": {
               "type": "object",
               "properties": {
@@ -24875,6 +26334,27 @@
                   "first_name",
                   "last_name",
                   "phone_number"
+              ]
+          },
+          "ClinicWebhookCreate": {
+              "type": "object",
+              "properties": {
+                  "action_type": {
+                      "$ref": "#/components/schemas/ActionTypeEnum"
+                  },
+                  "url": {
+                      "type": "string",
+                      "format": "uri",
+                      "maxLength": 200
+                  },
+                  "headers": {
+                      "type": "object",
+                      "additionalProperties": {}
+                  }
+              },
+              "required": [
+                  "action_type",
+                  "url"
               ]
           },
           "CommunicationRecord": {
@@ -32890,6 +34370,121 @@
                   "data",
                   "next",
                   "previous"
+              ]
+          },
+          "Webhook": {
+              "type": "object",
+              "properties": {
+                  "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "readOnly": true
+                  },
+                  "created_time": {
+                      "type": "string",
+                      "format": "date-time",
+                      "readOnly": true
+                  },
+                  "modified_time": {
+                      "type": "string",
+                      "format": "date-time",
+                      "readOnly": true
+                  },
+                  "clinic_id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "readOnly": true,
+                      "nullable": true
+                  },
+                  "action_type": {
+                      "type": "string",
+                      "readOnly": true
+                  },
+                  "url": {
+                      "type": "string",
+                      "format": "uri",
+                      "readOnly": true
+                  },
+                  "headers": {
+                      "readOnly": true
+                  }
+              },
+              "required": [
+                  "action_type",
+                  "clinic_id",
+                  "created_time",
+                  "headers",
+                  "id",
+                  "modified_time",
+                  "url"
+              ]
+          },
+          "WebhookListResponse": {
+              "type": "object",
+              "properties": {
+                  "count": {
+                      "type": "integer",
+                      "readOnly": true,
+                      "default": 0
+                  },
+                  "next": {
+                      "type": "string",
+                      "format": "uri",
+                      "readOnly": true,
+                      "nullable": true
+                  },
+                  "previous": {
+                      "type": "string",
+                      "format": "uri",
+                      "readOnly": true,
+                      "nullable": true
+                  },
+                  "data": {
+                      "type": "array",
+                      "items": {
+                          "$ref": "#/components/schemas/Webhook"
+                      },
+                      "readOnly": true
+                  }
+              },
+              "required": [
+                  "count",
+                  "data",
+                  "next",
+                  "previous"
+              ]
+          },
+          "WebhookRetrieveResponse": {
+              "type": "object",
+              "properties": {
+                  "data": {
+                      "allOf": [
+                          {
+                              "$ref": "#/components/schemas/Webhook"
+                          }
+                      ],
+                      "readOnly": true
+                  }
+              },
+              "required": [
+                  "data"
+              ]
+          },
+          "WebhookUpdate": {
+              "type": "object",
+              "properties": {
+                  "url": {
+                      "type": "string",
+                      "format": "uri",
+                      "maxLength": 200
+                  },
+                  "headers": {
+                      "type": "object",
+                      "additionalProperties": {}
+                  }
+              },
+              "required": [
+                  "url"
               ]
           }
       },

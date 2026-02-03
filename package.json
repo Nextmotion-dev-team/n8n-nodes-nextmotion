@@ -34,7 +34,8 @@
             "dist/credentials/NextMotionApi.credentials.js"
         ],
         "nodes": [
-            "dist/nodes/NextMotion/NextMotion.node.js"
+            "dist/nodes/NextMotion/NextMotion.node.js",
+            "dist/nodes/NextMotion/NextMotionTrigger.node.js"
         ]
     },
     "devDependencies": {
