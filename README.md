@@ -81,8 +81,6 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 - Visit created
 - And more...
 
-Webhooks are automatically registered and secured with auto-generated secrets.
-
 ## Credentials
 
 1. Log in to your NextMotion account
