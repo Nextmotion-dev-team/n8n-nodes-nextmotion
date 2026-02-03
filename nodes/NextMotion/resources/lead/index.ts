@@ -8,9 +8,10 @@ import {
 	createDeleteOperation,
 	createPostOperation,
 	createPaginationParameters,
-	createIdField,
 } from '../../shared/descriptions';
+import { leadCreateDescription } from './create';
 import { leadFiltersDescription } from './filters';
+import { leadUpdateDescription } from './update';
 
 const showOnlyForLead = {
 	resource: ['lead'],
@@ -60,14 +61,48 @@ export const leadDescription: INodeProperties[] = [
 	},
 	{
 		...clinicSelect,
+		required: false,
 		displayOptions: {
 			show: {
 				...showOnlyForLead,
-				operation: ['getAll', 'create'],
+				operation: ['getAll', 'create', 'get', 'update', 'delete', 'convertToPatient'],
 			},
 		},
+		description: 'Required for Get Many and Create. Optional for Get/Update/Delete/Convert when using lead ID directly.',
+	},
+	{
+		displayName: 'Lead',
+		name: 'leadId',
+		type: 'resourceLocator',
+		default: { mode: 'list', value: '' },
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['lead'],
+				operation: ['get', 'update', 'delete', 'convertToPatient'],
+			},
+		},
+		modes: [
+			{
+				displayName: 'From List',
+				name: 'list',
+				type: 'list',
+				typeOptions: {
+					searchListMethod: 'getLeads',
+					searchable: true,
+				},
+			},
+			{
+				displayName: 'By ID',
+				name: 'id',
+				type: 'string',
+				placeholder: 'e.g. 123e4567-e89b-12d3-a456-426614174000',
+			},
+		],
+		description: 'The lead to operate on (select clinic first for dropdown)',
 	},
 	...createPaginationParameters('lead'),
-	createIdField('Lead ID', 'leadId', 'lead', ['get', 'update', 'delete', 'convertToPatient']),
+	...leadCreateDescription,
 	...leadFiltersDescription,
+	...leadUpdateDescription,
 ];

@@ -1,5 +1,6 @@
 import type { INodeProperties } from 'n8n-workflow';
 import { clinicSelect, createGetManyOperation, createGetOperation, createPaginationParameters } from '../../shared/descriptions';
+import { appointmentRequestCreateDescription } from './create';
 
 const showOnlyForAppointmentRequest = {
 	resource: ['appointmentRequest'],
@@ -55,7 +56,7 @@ export const appointmentRequestDescription: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				...showOnlyForAppointmentRequest,
-				operation: ['getAll'],
+				operation: ['getAll', 'create'],
 			},
 		},
 	},
@@ -74,4 +75,5 @@ export const appointmentRequestDescription: INodeProperties[] = [
 		description: 'The ID of the appointment request',
 	},
 	...createPaginationParameters('appointmentRequest'),
+	...appointmentRequestCreateDescription,
 ];

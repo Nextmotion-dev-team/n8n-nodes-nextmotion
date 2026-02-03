@@ -7,36 +7,37 @@ const showOnlyForCalendarAppointmentReschedule = {
 
 export const calendarAppointmentRescheduleDescription: INodeProperties[] = [
 	{
-		displayName: 'Start Time',
-		name: 'start_time',
+		displayName: 'Time Slot',
+		name: 'time_slot',
 		type: 'dateTime',
 		default: '',
 		required: true,
 		displayOptions: {
 			show: showOnlyForCalendarAppointmentReschedule,
 		},
-		description: 'The new start time for the appointment',
+		description: 'The new time slot for the appointment',
 		routing: {
 			send: {
 				type: 'body',
-				property: 'start_time',
+				property: 'time_slot',
 			},
 		},
 	},
 	{
-		displayName: 'End Time',
-		name: 'end_time',
-		type: 'dateTime',
+		displayName: 'Visit Type Opening Hour',
+		name: 'visit_type_opening_hour',
+		type: 'string',
 		default: '',
 		required: true,
 		displayOptions: {
 			show: showOnlyForCalendarAppointmentReschedule,
 		},
-		description: 'The new end time for the appointment',
+		placeholder: 'e.g. 123e4567-e89b-12d3-a456-426614174000',
+		description: 'Visit type opening hour ID for the rescheduled appointment',
 		routing: {
 			send: {
 				type: 'body',
-				property: 'end_time',
+				property: 'visit_type_opening_hour',
 			},
 		},
 	},

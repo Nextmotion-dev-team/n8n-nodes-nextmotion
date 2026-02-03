@@ -3,12 +3,14 @@ import {
 	clinicSelect, 
 	createGetManyOperation, 
 	createGetOperation,
+	createCreateOperation,
 	createUpdateOperation,
 	createDeleteOperation,
 	createPostOperation,
 	createPaginationParameters,
-	createIdField,
 } from '../../shared/descriptions';
+import { quoteCreateDescription } from './create';
+import { quoteUpdateDescription } from './update';
 
 const showOnlyForQuote = {
 	resource: ['quote'],
@@ -34,6 +36,10 @@ export const quoteDescription: INodeProperties[] = [
 				'quote',
 				'=/open_api/v4/quotes/{{$parameter.quoteId}}',
 			),
+			createCreateOperation(
+				'quote',
+				'=/open_api/v4/consultations/{{$parameter.consultationId}}/quotes',
+			),
 			createUpdateOperation(
 				'quote',
 				'=/open_api/v4/quotes/{{$parameter.quoteId}}',
@@ -50,17 +56,51 @@ export const quoteDescription: INodeProperties[] = [
 				'=/open_api/v4/quotes/{{$parameter.quoteId}}/validate',
 			),
 		],
-		default: 'getAll',
+		default: 'create',
 	},
 	{
 		...clinicSelect,
+		required: false,
 		displayOptions: {
 			show: {
 				...showOnlyForQuote,
-				operation: ['getAll'],
+				operation: ['getAll', 'create', 'get', 'update', 'delete', 'validate'],
 			},
 		},
+		description: 'Required for Get Many. Optional for other operations when using quote ID directly.',
+	},
+	{
+		displayName: 'Quote',
+		name: 'quoteId',
+		type: 'resourceLocator',
+		default: { mode: 'list', value: '' },
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['quote'],
+				operation: ['get', 'update', 'delete', 'validate'],
+			},
+		},
+		modes: [
+			{
+				displayName: 'From List',
+				name: 'list',
+				type: 'list',
+				typeOptions: {
+					searchListMethod: 'getQuotes',
+					searchable: true,
+				},
+			},
+			{
+				displayName: 'By ID',
+				name: 'id',
+				type: 'string',
+				placeholder: 'e.g. 123e4567-e89b-12d3-a456-426614174000',
+			},
+		],
+		description: 'The quote to operate on (select clinic first for dropdown)',
 	},
 	...createPaginationParameters('quote'),
-	createIdField('Quote ID', 'quoteId', 'quote', ['get', 'update', 'delete', 'validate']),
+	...quoteCreateDescription,
+	...quoteUpdateDescription,
 ];

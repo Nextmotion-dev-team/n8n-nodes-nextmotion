@@ -1,5 +1,5 @@
 import type { INodeProperties } from 'n8n-workflow';
-import { createGetManyOperation, createPaginationParameters } from '../../shared/descriptions';
+import { clinicSelect, createGetManyOperation, createPaginationParameters } from '../../shared/descriptions';
 
 const showOnlyForTreatmentPricing = {
 	resource: ['treatmentPricing'],
@@ -24,15 +24,38 @@ export const treatmentPricingDescription: INodeProperties[] = [
 		default: 'getAll',
 	},
 	{
-		displayName: 'Treatment Type ID',
+		...clinicSelect,
+		displayOptions: {
+			show: showOnlyForTreatmentPricing,
+		},
+	},
+	{
+		displayName: 'Treatment Type',
 		name: 'treatmentTypeId',
-		type: 'string',
-		default: '',
+		type: 'resourceLocator',
+		default: { mode: 'list', value: '' },
 		required: true,
 		displayOptions: {
 			show: showOnlyForTreatmentPricing,
 		},
-		description: 'The ID of the treatment type',
+		modes: [
+			{
+				displayName: 'From List',
+				name: 'list',
+				type: 'list',
+				typeOptions: {
+					searchListMethod: 'getTreatmentTypes',
+					searchable: true,
+				},
+			},
+			{
+				displayName: 'By ID',
+				name: 'id',
+				type: 'string',
+				placeholder: 'e.g. 123e4567-e89b-12d3-a456-426614174000',
+			},
+		],
+		description: 'The treatment type to get pricings for (select clinic first)',
 	},
 	...createPaginationParameters('treatmentPricing'),
 ];

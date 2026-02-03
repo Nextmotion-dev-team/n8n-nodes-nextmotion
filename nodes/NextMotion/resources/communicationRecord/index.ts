@@ -1,5 +1,6 @@
 import type { INodeProperties } from 'n8n-workflow';
 import { clinicSelect, createGetManyOperation, createCreateOperation, createPaginationParameters } from '../../shared/descriptions';
+import { communicationRecordCreateDescription } from './create';
 
 const showOnlyForCommunicationRecord = {
 	resource: ['communicationRecord'],
@@ -34,4 +35,5 @@ export const communicationRecordDescription: INodeProperties[] = [
 		},
 	},
 	...createPaginationParameters('communicationRecord'),
+	...communicationRecordCreateDescription,
 ];

@@ -1,5 +1,6 @@
 import type { INodeProperties } from 'n8n-workflow';
 import { 
+	clinicSelect,
 	patientSelect,
 	createGetManyOperation,
 	createGetOperation,
@@ -8,7 +9,6 @@ import {
 	createDeleteOperation,
 	createPostOperation,
 	createPaginationParameters,
-	createIdField,
 } from '../../shared/descriptions';
 import { prescriptionCreateDescription } from './create';
 import { prescriptionUpdateDescription } from './update';
@@ -60,15 +60,58 @@ export const prescriptionDescription: INodeProperties[] = [
 		default: 'getAll',
 	},
 	{
-		...patientSelect,
+		...clinicSelect,
+		required: false,
 		displayOptions: {
 			show: {
 				...showOnlyForPrescription,
-				operation: ['getAll', 'create'],
+				operation: ['getAll', 'create', 'get', 'update', 'delete', 'sign'],
 			},
 		},
+		description: 'Required for Get Many and Create. Optional for other operations when using prescription ID directly.',
 	},
-	createIdField('Prescription ID', 'prescriptionId', 'prescription', ['get', 'update', 'delete', 'sign']),
+	{
+		...patientSelect,
+		required: false,
+		displayOptions: {
+			show: {
+				...showOnlyForPrescription,
+				operation: ['getAll', 'create', 'get', 'update', 'delete', 'sign'],
+			},
+		},
+		description: 'Required for Get Many and Create. Optional for other operations when using prescription ID directly.',
+	},
+	{
+		displayName: 'Prescription',
+		name: 'prescriptionId',
+		type: 'resourceLocator',
+		default: { mode: 'list', value: '' },
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['prescription'],
+				operation: ['get', 'update', 'delete', 'sign'],
+			},
+		},
+		modes: [
+			{
+				displayName: 'From List',
+				name: 'list',
+				type: 'list',
+				typeOptions: {
+					searchListMethod: 'getPrescriptions',
+					searchable: true,
+				},
+			},
+			{
+				displayName: 'By ID',
+				name: 'id',
+				type: 'string',
+				placeholder: 'e.g. 123e4567-e89b-12d3-a456-426614174000',
+			},
+		],
+		description: 'The prescription to operate on (select patient first for dropdown)',
+	},
 	...createPaginationParameters('prescription'),
 	...prescriptionCreateDescription,
 	...prescriptionUpdateDescription,

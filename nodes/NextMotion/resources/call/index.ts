@@ -1,5 +1,6 @@
 import type { INodeProperties } from 'n8n-workflow';
 import { clinicSelect, createGetManyOperation, createCreateOperation, createPaginationParameters } from '../../shared/descriptions';
+import { callCreateDescription } from './create';
 
 const showOnlyForCall = {
 	resource: ['call'],
@@ -34,4 +35,5 @@ export const callDescription: INodeProperties[] = [
 		},
 	},
 	...createPaginationParameters('call'),
+	...callCreateDescription,
 ];

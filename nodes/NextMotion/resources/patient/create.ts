@@ -127,6 +127,36 @@ export const patientCreateDescription: INodeProperties[] = [
 				},
 			},
 			{
+				displayName: 'Doctor',
+				name: 'doctor',
+				type: 'resourceLocator',
+				default: { mode: 'list', value: '' },
+				modes: [
+					{
+						displayName: 'From List',
+						name: 'list',
+						type: 'list',
+						typeOptions: {
+							searchListMethod: 'getDoctors',
+							searchable: true,
+						},
+					},
+					{
+						displayName: 'By ID',
+						name: 'id',
+						type: 'string',
+						placeholder: 'e.g. 123e4567-e89b-12d3-a456-426614174000',
+					},
+				],
+				description: 'Doctor ID of the patient provider (defaults to user making the request if left empty)',
+				routing: {
+					send: {
+						type: 'body',
+						property: 'doctor',
+					},
+				},
+			},
+			{
 				displayName: 'Doctor Comments',
 				name: 'doctor_comments',
 				type: 'string',

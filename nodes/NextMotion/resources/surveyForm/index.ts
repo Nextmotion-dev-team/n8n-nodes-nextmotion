@@ -1,5 +1,5 @@
 import type { INodeProperties } from 'n8n-workflow';
-import { clinicSelect, createGetManyOperation, createGetOperation, createPaginationParameters, createIdField } from '../../shared/descriptions';
+import { clinicSelect, createGetManyOperation, createGetOperation, createPaginationParameters } from '../../shared/descriptions';
 
 const showOnlyForSurveyForm = {
 	resource: ['surveyForm'],
@@ -30,13 +30,45 @@ export const surveyFormDescription: INodeProperties[] = [
 	},
 	{
 		...clinicSelect,
+		required: false,
 		displayOptions: {
 			show: {
 				...showOnlyForSurveyForm,
-				operation: ['getAll'],
+				operation: ['getAll', 'get'],
 			},
 		},
+		description: 'Required for Get Many. Optional for Get when using survey form ID directly.',
 	},
-	createIdField('Survey Form ID', 'surveyFormId', 'surveyForm', ['get']),
+	{
+		displayName: 'Survey Form',
+		name: 'surveyFormId',
+		type: 'resourceLocator',
+		default: { mode: 'list', value: '' },
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['surveyForm'],
+				operation: ['get'],
+			},
+		},
+		modes: [
+			{
+				displayName: 'From List',
+				name: 'list',
+				type: 'list',
+				typeOptions: {
+					searchListMethod: 'getSurveyForms',
+					searchable: true,
+				},
+			},
+			{
+				displayName: 'By ID',
+				name: 'id',
+				type: 'string',
+				placeholder: 'e.g. 123e4567-e89b-12d3-a456-426614174000',
+			},
+		],
+		description: 'The survey form to get (select clinic first for dropdown)',
+	},
 	...createPaginationParameters('surveyForm'),
 ];

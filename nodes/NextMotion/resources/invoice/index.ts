@@ -3,13 +3,15 @@ import {
 	clinicSelect, 
 	createGetManyOperation, 
 	createGetOperation,
+	createCreateOperation,
 	createUpdateOperation,
 	createDeleteOperation,
 	createPostOperation,
 	createPaginationParameters,
-	createIdField,
 } from '../../shared/descriptions';
+import { invoiceCreateDescription } from './create';
 import { invoicePayDescription } from './pay';
+import { invoiceUpdateDescription } from './update';
 
 const showOnlyForInvoice = {
 	resource: ['invoice'],
@@ -35,6 +37,10 @@ export const invoiceDescription: INodeProperties[] = [
 				'invoice',
 				'=/open_api/v4/invoices/{{$parameter.invoiceId}}',
 			),
+			createCreateOperation(
+				'invoice',
+				'=/open_api/v4/consultations/{{$parameter.consultationId}}/invoices',
+			),
 			createUpdateOperation(
 				'invoice',
 				'=/open_api/v4/invoices/{{$parameter.invoiceId}}',
@@ -58,18 +64,52 @@ export const invoiceDescription: INodeProperties[] = [
 				'=/open_api/v4/invoices/{{$parameter.invoiceId}}/validate',
 			),
 		],
-		default: 'getAll',
+		default: 'create',
 	},
 	{
 		...clinicSelect,
+		required: false,
 		displayOptions: {
 			show: {
 				...showOnlyForInvoice,
-				operation: ['getAll'],
+				operation: ['getAll', 'create', 'get', 'update', 'delete', 'pay', 'validate'],
 			},
 		},
+		description: 'Required for Get Many. Optional for other operations when using invoice ID directly.',
+	},
+	{
+		displayName: 'Invoice',
+		name: 'invoiceId',
+		type: 'resourceLocator',
+		default: { mode: 'list', value: '' },
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['invoice'],
+				operation: ['get', 'update', 'delete', 'pay', 'validate'],
+			},
+		},
+		modes: [
+			{
+				displayName: 'From List',
+				name: 'list',
+				type: 'list',
+				typeOptions: {
+					searchListMethod: 'getInvoices',
+					searchable: true,
+				},
+			},
+			{
+				displayName: 'By ID',
+				name: 'id',
+				type: 'string',
+				placeholder: 'e.g. 123e4567-e89b-12d3-a456-426614174000',
+			},
+		],
+		description: 'The invoice to operate on (select clinic first for dropdown)',
 	},
 	...createPaginationParameters('invoice'),
-	createIdField('Invoice ID', 'invoiceId', 'invoice', ['get', 'update', 'delete', 'pay', 'validate']),
+	...invoiceCreateDescription,
 	...invoicePayDescription,
+	...invoiceUpdateDescription,
 ];

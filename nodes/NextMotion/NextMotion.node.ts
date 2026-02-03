@@ -31,9 +31,30 @@ import { webhookDescription } from './resources/webhook';
 import { getClinics } from './listSearch/getClinics';
 import { getPatients } from './listSearch/getPatients';
 import { getDoctors } from './listSearch/getDoctors';
+import { getConsultations } from './listSearch/getConsultations';
+import { getInvoices } from './listSearch/getInvoices';
+import { getQuotes } from './listSearch/getQuotes';
 import { getTreatmentTypes } from './listSearch/getTreatmentTypes';
+import { getTreatments } from './listSearch/getTreatments';
+import { getAppointmentDevices } from './listSearch/getAppointmentDevices';
+import { getAppointmentRooms } from './listSearch/getAppointmentRooms';
+import { getCalendarAppointments } from './listSearch/getCalendarAppointments';
+import { getSubVisitTypes } from './listSearch/getSubVisitTypes';
+import { getPayments } from './listSearch/getPayments';
+import { getTreatmentPricings } from './listSearch/getTreatmentPricings';
+import { getPrescriptions } from './listSearch/getPrescriptions';
+import { getVisits } from './listSearch/getVisits';
+import { getLeads } from './listSearch/getLeads';
+import { getWebhooks } from './listSearch/getWebhooks';
 import { getVisitTypes } from './listSearch/getVisitTypes';
 import { getSurveyForms } from './listSearch/getSurveyForms';
+import {
+	getInvoiceDocumentTemplates,
+	getQuoteDocumentTemplates,
+	getPrescriptionDocumentTemplates,
+} from './listSearch/getDocumentTemplates';
+import { getDoctorsLoadOptions } from './loadOptions/getDoctors';
+import { getAppointmentRoomsLoadOptions } from './loadOptions/getAppointmentRooms';
 
 export class NextMotion implements INodeType {
 	description: INodeTypeDescription = {
@@ -226,9 +247,30 @@ export class NextMotion implements INodeType {
 			getClinics,
 			getPatients,
 			getDoctors,
+			getConsultations,
+			getInvoices,
+			getLeads,
+			getPayments,
+			getPrescriptions,
+			getQuotes,
 			getTreatmentTypes,
+			getTreatmentPricings,
+			getTreatments,
 			getVisitTypes,
+			getVisits,
+			getSubVisitTypes,
+			getAppointmentDevices,
+			getAppointmentRooms,
+			getCalendarAppointments,
+			getWebhooks,
 			getSurveyForms,
+			getInvoiceDocumentTemplates,
+			getQuoteDocumentTemplates,
+			getPrescriptionDocumentTemplates,
+		},
+		loadOptions: {
+			getDoctors: getDoctorsLoadOptions,
+			getAppointmentRooms: getAppointmentRoomsLoadOptions,
 		},
 	};
 }

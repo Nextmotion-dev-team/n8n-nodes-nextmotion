@@ -1,5 +1,6 @@
 import type { INodeProperties } from 'n8n-workflow';
 import { 
+	clinicSelect,
 	patientSelect,
 	createGetManyOperation,
 	createGetOperation,
@@ -7,11 +8,11 @@ import {
 	createUpdateOperation,
 	createDeleteOperation,
 	createPaginationParameters,
-	createIdField,
 } from '../../shared/descriptions';
 import { treatmentCreateDescription } from './create';
 import { treatmentUpdateDescription } from './update';
 import { treatmentFiltersDescription } from './filters';
+import { treatmentUploadConsentFormDescription } from './uploadConsentForm';
 
 const showOnlyForTreatment = {
 	resource: ['treatment'],
@@ -75,17 +76,61 @@ export const treatmentDescription: INodeProperties[] = [
 		default: 'uploadConsentForm',
 	},
 	{
-		...patientSelect,
+		...clinicSelect,
+		required: false,
 		displayOptions: {
 			show: {
 				...showOnlyForTreatment,
-				operation: ['getAll', 'create'],
+				operation: ['getAll', 'create', 'get', 'update', 'delete', 'uploadConsentForm'],
 			},
 		},
+		description: 'Required when using dropdown selection for treatments',
 	},
-	createIdField('Treatment ID', 'treatmentId', 'treatment', ['get', 'update', 'delete', 'uploadConsentForm']),
+	{
+		...patientSelect,
+		required: false,
+		displayOptions: {
+			show: {
+				...showOnlyForTreatment,
+				operation: ['getAll', 'create', 'get', 'update', 'delete', 'uploadConsentForm'],
+			},
+		},
+		description: 'Required when using dropdown selection for treatments. For Create/GetAll: required. For Get/Update/Delete: optional if using treatment ID directly.',
+	},
+	{
+		displayName: 'Treatment',
+		name: 'treatmentId',
+		type: 'resourceLocator',
+		default: { mode: 'list', value: '' },
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['treatment'],
+				operation: ['get', 'update', 'delete', 'uploadConsentForm'],
+			},
+		},
+		modes: [
+			{
+				displayName: 'From List',
+				name: 'list',
+				type: 'list',
+				typeOptions: {
+					searchListMethod: 'getTreatments',
+					searchable: true,
+				},
+			},
+			{
+				displayName: 'By ID',
+				name: 'id',
+				type: 'string',
+				placeholder: 'e.g. 123e4567-e89b-12d3-a456-426614174000',
+			},
+		],
+		description: 'The treatment to operate on (select patient first)',
+	},
 	...createPaginationParameters('treatment'),
 	...treatmentFiltersDescription,
 	...treatmentCreateDescription,
 	...treatmentUpdateDescription,
+	...treatmentUploadConsentFormDescription,
 ];

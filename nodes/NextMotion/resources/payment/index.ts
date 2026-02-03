@@ -6,9 +6,9 @@ import {
 	createUpdateOperation,
 	createDeleteOperation,
 	createPaginationParameters,
-	createIdField,
 } from '../../shared/descriptions';
 import { paymentFiltersDescription } from './filters';
+import { paymentUpdateDescription } from './update';
 
 const showOnlyForPayment = {
 	resource: ['payment'],
@@ -47,14 +47,47 @@ export const paymentDescription: INodeProperties[] = [
 	},
 	{
 		...clinicSelect,
+		required: false,
 		displayOptions: {
 			show: {
 				...showOnlyForPayment,
-				operation: ['getAll'],
+				operation: ['getAll', 'get', 'update', 'delete'],
 			},
 		},
+		description: 'Required for Get Many. Optional for Get/Update/Delete when using payment ID directly.',
+	},
+	{
+		displayName: 'Payment',
+		name: 'paymentId',
+		type: 'resourceLocator',
+		default: { mode: 'list', value: '' },
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['payment'],
+				operation: ['get', 'update', 'delete'],
+			},
+		},
+		modes: [
+			{
+				displayName: 'From List',
+				name: 'list',
+				type: 'list',
+				typeOptions: {
+					searchListMethod: 'getPayments',
+					searchable: true,
+				},
+			},
+			{
+				displayName: 'By ID',
+				name: 'id',
+				type: 'string',
+				placeholder: 'e.g. 123e4567-e89b-12d3-a456-426614174000',
+			},
+		],
+		description: 'The payment to operate on',
 	},
 	...createPaginationParameters('payment'),
-	createIdField('Payment ID', 'paymentId', 'payment', ['get', 'update', 'delete']),
 	...paymentFiltersDescription,
+	...paymentUpdateDescription,
 ];
