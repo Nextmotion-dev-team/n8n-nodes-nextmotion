@@ -1,6 +1,6 @@
 {
     "name": "n8n-nodes-nextmotion",
-    "version": "1.2.2",
+    "version": "1.2.3",
     "description": "n8n community node for NextMotion API integration",
     "license": "MIT",
     "homepage": "https://github.com/Nextmotion-dev-team/n8n-nodes-nextmotion",
