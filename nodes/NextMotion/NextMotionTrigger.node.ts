@@ -140,6 +140,7 @@ export class NextMotionTrigger implements INodeType {
 				} catch {
 					// Webhook was deleted or doesn't exist
 					delete webhookData.webhookId;
+					delete webhookData.webhookSecret;
 					return false;
 				}
 			},
@@ -194,6 +195,7 @@ export class NextMotionTrigger implements INodeType {
 
 				if (deleted) {
 					delete webhookData.webhookId;
+					delete webhookData.webhookSecret;
 				}
 
 				return deleted;

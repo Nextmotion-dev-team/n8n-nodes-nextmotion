@@ -1,5 +1,5 @@
 import type { INodeProperties } from 'n8n-workflow';
-import { clinicSelect, createGetManyOperation, createCreateOperation, createPaginationParameters } from '../../shared/descriptions';
+import { clinicSelect, createPostOperation, createCreateOperation, createPaginationParameters } from '../../shared/descriptions';
 import { communicationRecordCreateDescription } from './create';
 
 const showOnlyForCommunicationRecord = {
@@ -16,9 +16,11 @@ export const communicationRecordDescription: INodeProperties[] = [
 			show: showOnlyForCommunicationRecord,
 		},
 		options: [
-			createGetManyOperation(
-				'communicationRecord',
-				'communication records',
+			createPostOperation(
+				'Get Many',
+				'getAll',
+				'Get many communication records',
+				'Get a list of communication records',
 				'=/open_api/v4/clinics/{{$parameter.clinicId}}/communication_records',
 			),
 			createCreateOperation(

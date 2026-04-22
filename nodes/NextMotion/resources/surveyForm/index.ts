@@ -1,5 +1,15 @@
 import type { INodeProperties } from 'n8n-workflow';
-import { clinicSelect, createGetManyOperation, createGetOperation, createPaginationParameters } from '../../shared/descriptions';
+import {
+	clinicSelect,
+	createGetManyOperation,
+	createGetOperation,
+	createCreateOperation,
+	createUpdateOperation,
+	createDeleteOperation,
+	createPaginationParameters,
+} from '../../shared/descriptions';
+import { surveyFormCreateDescription } from './create';
+import { surveyFormUpdateDescription } from './update';
 
 const showOnlyForSurveyForm = {
 	resource: ['surveyForm'],
@@ -11,20 +21,13 @@ export const surveyFormDescription: INodeProperties[] = [
 		name: 'operation',
 		type: 'options',
 		noDataExpression: true,
-		displayOptions: {
-			show: showOnlyForSurveyForm,
-		},
+		displayOptions: { show: showOnlyForSurveyForm },
 		options: [
-			createGetManyOperation(
-				'surveyForm',
-				'survey forms',
-				'=/open_api/v4/clinics/{{$parameter.clinicId}}/survey_forms',
-			),
-			createGetOperation(
-				'surveyForm',
-				'survey form',
-				'=/open_api/v4/survey_forms/{{$parameter.surveyFormId}}',
-			),
+			createGetManyOperation('surveyForm', 'survey forms', '=/open_api/v4/clinics/{{$parameter.clinicId}}/survey_forms'),
+			createGetOperation('surveyForm', 'survey form', '=/open_api/v4/survey_forms/{{$parameter.surveyFormId}}'),
+			createCreateOperation('survey form', '=/open_api/v4/clinics/{{$parameter.clinicId}}/survey_forms'),
+			createUpdateOperation('survey form', '=/open_api/v4/survey_forms/{{$parameter.surveyFormId}}'),
+			createDeleteOperation('survey form', '=/open_api/v4/survey_forms/{{$parameter.surveyFormId}}'),
 		],
 		default: 'getAll',
 	},
@@ -34,10 +37,10 @@ export const surveyFormDescription: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				...showOnlyForSurveyForm,
-				operation: ['getAll', 'get'],
+				operation: ['getAll', 'get', 'create', 'update', 'delete'],
 			},
 		},
-		description: 'Required for Get Many. Optional for Get when using survey form ID directly.',
+		description: 'Required for Get Many and Create. Optional for other operations.',
 	},
 	{
 		displayName: 'Survey Form',
@@ -48,7 +51,7 @@ export const surveyFormDescription: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['surveyForm'],
-				operation: ['get'],
+				operation: ['get', 'update', 'delete'],
 			},
 		},
 		modes: [
@@ -56,10 +59,7 @@ export const surveyFormDescription: INodeProperties[] = [
 				displayName: 'From List',
 				name: 'list',
 				type: 'list',
-				typeOptions: {
-					searchListMethod: 'getSurveyForms',
-					searchable: true,
-				},
+				typeOptions: { searchListMethod: 'getSurveyForms', searchable: true },
 			},
 			{
 				displayName: 'By ID',
@@ -68,7 +68,9 @@ export const surveyFormDescription: INodeProperties[] = [
 				placeholder: 'e.g. 123e4567-e89b-12d3-a456-426614174000',
 			},
 		],
-		description: 'The survey form to get (select clinic first for dropdown)',
+		description: 'The survey form to operate on (select clinic first for dropdown)',
 	},
 	...createPaginationParameters('surveyForm'),
+	...surveyFormCreateDescription,
+	...surveyFormUpdateDescription,
 ];

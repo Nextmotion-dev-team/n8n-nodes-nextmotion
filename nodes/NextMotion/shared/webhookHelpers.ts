@@ -1,16 +1,9 @@
+import { randomBytes } from 'crypto';
 import type { IDataObject, IHookFunctions } from 'n8n-workflow';
 import { nextMotionApiRequest } from './transport';
 
-/**
- * Generate a cryptographically secure webhook secret
- * Format: whsec_<random_string> (similar to Stripe/GitHub)
- */
 export function generateWebhookSecret(): string {
-	// Combine multiple random sources for sufficient entropy (~208 bits)
-	const randomString = Array.from({ length: 4 }, () => 
-		Math.random().toString(36).substring(2, 15)
-	).join('');
-	return `whsec_${randomString}`;
+	return `whsec_${randomBytes(32).toString('hex')}`;
 }
 
 /**

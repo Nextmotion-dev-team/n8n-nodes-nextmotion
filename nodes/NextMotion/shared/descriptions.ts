@@ -233,7 +233,7 @@ export function createUpdateOperation(
 		description: `Update an existing ${displayName.toLowerCase()}`,
 		routing: {
 			request: {
-				method: 'PATCH',
+				method: 'PUT',
 				url,
 			},
 			output: {

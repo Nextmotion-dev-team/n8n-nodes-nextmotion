@@ -1,5 +1,5 @@
 import type { INodeProperties } from 'n8n-workflow';
-import { clinicSelect, createGetManyOperation, createPaginationParameters } from '../../shared/descriptions';
+import { clinicSelect, createGetManyOperation, createGetOperation, createPaginationParameters } from '../../shared/descriptions';
 
 const showOnlyForTreatmentPricing = {
 	resource: ['treatmentPricing'],
@@ -18,25 +18,38 @@ export const treatmentPricingDescription: INodeProperties[] = [
 			createGetManyOperation(
 				'treatmentPricing',
 				'treatment pricings',
-				'=/open_api/v4/treatment_types/{{$parameter.treatmentTypeId}}/pricings',
+				'=/open_api/v4/clinics/{{$parameter.clinicId}}/treatment_pricings',
+			),
+			createGetOperation(
+				'treatmentPricing',
+				'treatment pricing',
+				'=/open_api/v4/treatment_pricings/{{$parameter.treatmentPricingId}}',
 			),
 		],
 		default: 'getAll',
 	},
 	{
 		...clinicSelect,
+		required: false,
 		displayOptions: {
-			show: showOnlyForTreatmentPricing,
+			show: {
+				...showOnlyForTreatmentPricing,
+				operation: ['getAll', 'get'],
+			},
 		},
+		description: 'Required for Get Many. Optional for Get when using treatment pricing ID directly.',
 	},
 	{
-		displayName: 'Treatment Type',
-		name: 'treatmentTypeId',
+		displayName: 'Treatment Pricing',
+		name: 'treatmentPricingId',
 		type: 'resourceLocator',
 		default: { mode: 'list', value: '' },
 		required: true,
 		displayOptions: {
-			show: showOnlyForTreatmentPricing,
+			show: {
+				resource: ['treatmentPricing'],
+				operation: ['get'],
+			},
 		},
 		modes: [
 			{
@@ -44,7 +57,7 @@ export const treatmentPricingDescription: INodeProperties[] = [
 				name: 'list',
 				type: 'list',
 				typeOptions: {
-					searchListMethod: 'getTreatmentTypes',
+					searchListMethod: 'getTreatmentPricings',
 					searchable: true,
 				},
 			},
@@ -55,7 +68,7 @@ export const treatmentPricingDescription: INodeProperties[] = [
 				placeholder: 'e.g. 123e4567-e89b-12d3-a456-426614174000',
 			},
 		],
-		description: 'The treatment type to get pricings for (select clinic first)',
+		description: 'The treatment pricing to get (select clinic first for dropdown)',
 	},
 	...createPaginationParameters('treatmentPricing'),
 ];

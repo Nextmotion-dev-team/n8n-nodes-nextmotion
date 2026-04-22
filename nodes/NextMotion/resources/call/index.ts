@@ -1,5 +1,5 @@
 import type { INodeProperties } from 'n8n-workflow';
-import { clinicSelect, createGetManyOperation, createCreateOperation, createPaginationParameters } from '../../shared/descriptions';
+import { clinicSelect, createPostOperation, createCreateOperation, createPaginationParameters } from '../../shared/descriptions';
 import { callCreateDescription } from './create';
 
 const showOnlyForCall = {
@@ -16,9 +16,11 @@ export const callDescription: INodeProperties[] = [
 			show: showOnlyForCall,
 		},
 		options: [
-			createGetManyOperation(
-				'call',
-				'calls',
+			createPostOperation(
+				'Get Many',
+				'getAll',
+				'Get many calls',
+				'Get a list of calls',
 				'=/open_api/v4/clinics/{{$parameter.clinicId}}/calls',
 			),
 			createCreateOperation(

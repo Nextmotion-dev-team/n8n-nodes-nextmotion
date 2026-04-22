@@ -2,7 +2,7 @@
 	"node": "n8n-nodes-nextmotion",
 	"nodeVersion": "1.0",
 	"codexVersion": "1.0",
-	"categories": ["Productivity", "Healthcare"],
+	"categories": ["Productivity", "Miscellaneous"],
 	"resources": {
 		"credentialDocumentation": [
 			{

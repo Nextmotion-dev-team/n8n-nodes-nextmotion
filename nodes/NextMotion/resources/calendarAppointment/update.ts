@@ -7,6 +7,117 @@ const showOnlyForCalendarAppointment = {
 
 export const calendarAppointmentUpdateDescription: INodeProperties[] = [
 	{
+		displayName: 'Calendar Event',
+		name: 'calendar_event',
+		type: 'collection',
+		placeholder: 'Add Field',
+		required: true,
+		default: {},
+		displayOptions: {
+			show: showOnlyForCalendarAppointment,
+		},
+		description: 'Calendar event details such as times, doctors, rooms, etc',
+		options: [
+			{
+				displayName: 'Appointment Room Names or IDs',
+				name: 'appointment_rooms',
+				type: 'multiOptions',
+				default: [],
+				typeOptions: {
+					loadOptionsMethod: 'getAppointmentRooms',
+				},
+				description: 'Rooms for the appointment (required if doctors not provided). Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+			},
+			{
+				displayName: 'Color',
+				name: 'color',
+				type: 'color',
+				default: '',
+				description: 'Color for calendar display',
+			},
+			{
+				displayName: 'Doctor Names or IDs',
+				name: 'doctors',
+				type: 'multiOptions',
+				default: [],
+				typeOptions: {
+					loadOptionsMethod: 'getDoctors',
+				},
+				description: 'Doctors for the appointment (required if rooms not provided). Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+			},
+			{
+				displayName: 'End Time',
+				name: 'end_time',
+				type: 'dateTime',
+				default: '',
+				description: 'End time of the appointment (must be after start time)',
+			},
+			{
+				displayName: 'Notes',
+				name: 'notes',
+				type: 'string',
+				default: '',
+				typeOptions: {
+					rows: 3,
+				},
+				description: 'Additional notes or comments about the appointment',
+			},
+			{
+				displayName: 'Start Time',
+				name: 'start_time',
+				type: 'dateTime',
+				default: '',
+				description: 'Start time of the appointment',
+			},
+			{
+				displayName: 'Title',
+				name: 'title',
+				type: 'string',
+				default: '',
+				description: "Title or label for the event (usually patient's or doctor's full name)",
+			},
+			{
+				displayName: 'Treatment Session Status',
+				name: 'treatment_session_status',
+				type: 'options',
+				default: 'none',
+				options: [
+					{
+						name: 'Control',
+						value: 'control',
+					},
+					{
+						name: 'New',
+						value: 'new',
+					},
+					{
+						name: 'None',
+						value: 'none',
+					},
+					{
+						name: 'Package',
+						value: 'package',
+					},
+					{
+						name: 'Paid',
+						value: 'paid',
+					},
+					{
+						name: 'Planned',
+						value: 'planned',
+					},
+				],
+				description: 'Status of the treatment session (ignored if no treatment sessions)',
+			},
+		],
+		routing: {
+			send: {
+				type: 'body',
+				property: 'calendar_event',
+			},
+		},
+	},
+	{
 		displayName: 'Update Fields',
 		name: 'updateFields',
 		type: 'collection',
@@ -16,113 +127,6 @@ export const calendarAppointmentUpdateDescription: INodeProperties[] = [
 			show: showOnlyForCalendarAppointment,
 		},
 		options: [
-			{
-				displayName: 'Calendar Event',
-				name: 'calendar_event',
-				type: 'collection',
-				placeholder: 'Add Field',
-				default: {},
-				description: 'Calendar event details such as times, doctors, rooms, etc',
-				options: [
-					{
-						displayName: 'Appointment Room Names or IDs',
-						name: 'appointment_rooms',
-						type: 'multiOptions',
-						default: [],
-						typeOptions: {
-							loadOptionsMethod: 'getAppointmentRooms',
-						},
-						description: 'Rooms for the appointment (required if doctors not provided). Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
-					},
-					{
-						displayName: 'Color',
-						name: 'color',
-						type: 'color',
-						default: '',
-						description: 'Color for calendar display',
-					},
-					{
-						displayName: 'Doctor Names or IDs',
-						name: 'doctors',
-						type: 'multiOptions',
-						default: [],
-						typeOptions: {
-							loadOptionsMethod: 'getDoctors',
-						},
-						description: 'Doctors for the appointment (required if rooms not provided). Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
-					},
-					{
-						displayName: 'End Time',
-						name: 'end_time',
-						type: 'dateTime',
-						default: '',
-						description: 'End time of the appointment (must be after start time)',
-					},
-					{
-						displayName: 'Notes',
-						name: 'notes',
-						type: 'string',
-						default: '',
-						typeOptions: {
-							rows: 3,
-						},
-						description: 'Additional notes or comments about the appointment',
-					},
-					{
-						displayName: 'Start Time',
-						name: 'start_time',
-						type: 'dateTime',
-						default: '',
-						description: 'Start time of the appointment',
-					},
-					{
-						displayName: 'Title',
-						name: 'title',
-						type: 'string',
-						default: '',
-						description: "Title or label for the event (usually patient's or doctor's full name)",
-					},
-					{
-						displayName: 'Treatment Session Status',
-						name: 'treatment_session_status',
-						type: 'options',
-						default: 'none',
-						options: [
-							{
-								name: 'Control',
-								value: 'control',
-							},
-							{
-								name: 'New',
-								value: 'new',
-							},
-							{
-								name: 'None',
-								value: 'none',
-							},
-							{
-								name: 'Package',
-								value: 'package',
-							},
-							{
-								name: 'Paid',
-								value: 'paid',
-							},
-							{
-								name: 'Planned',
-								value: 'planned',
-							},
-						],
-						description: 'Status of the treatment session (ignored if no treatment sessions)',
-					},
-				],
-				routing: {
-					send: {
-						type: 'body',
-						property: 'calendar_event',
-					},
-				},
-			},
 			{
 				displayName: 'Device',
 				name: 'device',

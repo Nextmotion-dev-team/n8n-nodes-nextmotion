@@ -24,22 +24,11 @@ export function createLoadOptions<T extends { id: string; name?: string }>(
 		// Build URL
 		const url = typeof config.url === 'function' ? config.url(this) : config.url;
 
-		try {
-			// Make API request
-			const response = await nextMotionApiRequest.call(
-				this,
-				'GET',
-				url,
-			) as PaginatedResponse<T>;
-
-			// Format results
-			const items = response.data || [];
-			return items.map((item) => ({
-				name: config.nameFormatter(item),
-				value: config.valueFormatter ? config.valueFormatter(item) : item.id,
-			}));
-		} catch {
-			return [];
-		}
+		const response = await nextMotionApiRequest.call(this, 'GET', url) as PaginatedResponse<T>;
+		const items = response.data || [];
+		return items.map((item) => ({
+			name: config.nameFormatter(item),
+			value: config.valueFormatter ? config.valueFormatter(item) : item.id,
+		}));
 	};
 }

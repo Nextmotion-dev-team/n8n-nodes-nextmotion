@@ -42,7 +42,6 @@ export const leadCreateDescription: INodeProperties[] = [
 		displayName: 'Email',
 		name: 'email',
 		type: 'string',
-		required: true,
 		displayOptions: {
 			show: showOnlyForLead,
 		},
@@ -59,7 +58,6 @@ export const leadCreateDescription: INodeProperties[] = [
 		displayName: 'Phone Number',
 		name: 'phone_number',
 		type: 'string',
-		required: true,
 		displayOptions: {
 			show: showOnlyForLead,
 		},
