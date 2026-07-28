@@ -69,20 +69,6 @@ export const invoiceCreateDescription: INodeProperties[] = [
 				},
 			},
 			{
-				displayName: 'Created Time',
-				name: 'created_time',
-				type: 'dateTime',
-				default: '',
-				description: 'Invoice issue date',
-				routing: {
-					send: {
-						type: 'body',
-						property: 'created_time',
-						value: '={{$value.split("T")[0]}}',
-					},
-				},
-			},
-			{
 				displayName: 'Do Validate',
 				name: 'do_validate',
 				type: 'boolean',
@@ -155,16 +141,29 @@ export const invoiceCreateDescription: INodeProperties[] = [
 				},
 			},
 			{
-				displayName: 'Invoiced Time',
+				displayName: 'Invoice Issue Date',
+				name: 'issued_time',
+				type: 'dateTime',
+				default: '',
+				description:
+					"Invoice issue date as a full UTC datetime, drives the invoice number's year; must fall within the clinic's current year and not in the future (defaults to now if omitted)",
+				routing: {
+					send: {
+						type: 'body',
+						property: 'issued_time',
+					},
+				},
+			},
+			{
+				displayName: 'Invoice Sale Date',
 				name: 'invoiced_time',
 				type: 'dateTime',
 				default: '',
-				description: 'Invoice sale date',
+				description: 'Invoice sale date as a full UTC datetime (defaults to now if omitted)',
 				routing: {
 					send: {
 						type: 'body',
 						property: 'invoiced_time',
-						value: '={{$value.split("T")[0]}}',
 					},
 				},
 			},
