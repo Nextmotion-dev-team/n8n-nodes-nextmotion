@@ -22,7 +22,7 @@ export const invoiceUpdateDescription: INodeProperties[] = [
 				type: 'dateTime',
 				default: '',
 				description:
-					"Invoice issue date as a full UTC datetime, drives the invoice number's year (left unchanged if empty)",
+					"Invoice issue date as a full UTC datetime, drives the invoice number's year; editable on draft invoices only, must fall within the clinic's current year and not in the future (left unchanged if omitted)",
 				routing: {
 					send: {
 						type: 'body',
@@ -31,11 +31,11 @@ export const invoiceUpdateDescription: INodeProperties[] = [
 				},
 			},
 			{
-				displayName: 'Invoiced Time',
+				displayName: 'Invoice Sale Date',
 				name: 'invoiced_time',
 				type: 'dateTime',
 				default: '',
-				description: 'Invoice sale date as a full UTC datetime (left unchanged if empty)',
+				description: 'Invoice sale date as a full UTC datetime; editable on draft invoices only (left unchanged if omitted)',
 				routing: {
 					send: {
 						type: 'body',
